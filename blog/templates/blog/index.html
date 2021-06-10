@@ -1,0 +1,10 @@
+{% extends 'blog/base_blog.html' %}
+
+{% block title %}
+    index
+{% endblock %}
+{% block content %}
+    {% for post in posts %}
+        {% include 'blog/includes/post_card_template.html' %}
+    {% endfor %}
+{% endblock %}0

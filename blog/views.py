@@ -1,6 +1,7 @@
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import render, get_object_or_404, redirect
 from django.views import View
 
+from .forms import TagForm
 from .models import Post, Tag
 from .utils import ObjectDetailMixin
 
@@ -22,14 +23,30 @@ class PostDetail(ObjectDetailMixin, View):
         #return render(request, 'blog/post_detail.html', context={'post': post})
 
 
-def tags_list(request):
-    tags = Tag.objects.all()
-    return render(request, 'blog/tags_list.html', context={'tags': tags})
-
-#def tag_detail(request, slug):
-    #tag = Tag.objects.get(slug__iexact=slug)
-    #return render(request, 'blog/tag_detail.html', context={'tag': tag})
+# def tag_detail(request, slug):
+# tag = Tag.objects.get(slug__iexact=slug)
+# return render(request, 'blog/tag_detail.html', context={'tag': tag})
 
 class TagDetail(ObjectDetailMixin, View):
     model = Tag
     template = 'blog/tag_detail.html'
+
+
+class TagCreate(View):
+    def get(self, request):
+        form = TagForm()
+        return render(request, 'blog/tag_create.html', context={'form': form})
+
+    def post(self, request):
+        bound_form = TagForm(request.POST)
+
+        if bound_form.is_valid():
+            new_tag = bound_form.save()
+            return redirect(new_tag)
+        return render(request, 'blog/tag_create.html', context={'form': bound_form})
+
+def tags_list(request):
+    tags = Tag.objects.all()
+    return render(request, 'blog/tags_list.html', context={'tags': tags})
+
+
